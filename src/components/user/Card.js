@@ -2,7 +2,7 @@
 import React from "react";
 import { Text } from "./Text";
 import { Button } from "./Button";
-import { Container } from "./Container";
+import { Container, ContainerSettings, ContainerDefaultProps } from "./Container";
 import { useNode, Element } from "@craftjs/core";
 
 export const CardTop = ({ children }) => {
@@ -57,4 +57,12 @@ export const Card = ({ background, padding = 20 }) => {
       </Element>
     </Container>
   );
+};
+
+Card.craft = {
+  props: ContainerDefaultProps,
+  related: {
+    // Since Card has the same settings as Container, we'll just reuse ContainerSettings
+    settings: ContainerSettings,
+  },
 };

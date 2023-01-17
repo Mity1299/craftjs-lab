@@ -10,9 +10,28 @@ import {
   FormLabel,
   Slider,
 } from "@material-ui/core";
+import { Element, useEditor } from "@craftjs/core";
 
 export const SettingsPanel = () => {
-  return (
+  const { actions, selected } = useEditor((state, query) => {
+    const [currentNodeId] = state.events.selected;
+    let selected;
+
+    if (currentNodeId) {
+      selected = {
+        id: currentNodeId,
+        name: state.nodes[currentNodeId].data.name,
+        settings: state.nodes[currentNodeId].related && state.nodes[currentNodeId].related.settings,
+        isDeletable: query.node(currentNodeId).isDeletable(),
+      };
+    }
+
+    return {
+      selected,
+    };
+  });
+
+  return selected ? (
     <Box bgcolor="rgba(0, 0, 0, 0.06)" mt={2} px={2} py={2}>
       <Grid container direction="column" spacing={0}>
         <Grid item>
@@ -31,10 +50,20 @@ export const SettingsPanel = () => {
           <FormLabel component="legend">Prop</FormLabel>
           <Slider defaultValue={0} step={1} min={7} max={50} valueLabelDisplay="auto" />
         </FormControl>
-        <MaterialButton variant="contained" color="default">
-          Delete
-        </MaterialButton>
+        {selected.settings && React.createElement(selected.settings)}
+
+        {selected.isDeletable ? (
+          <MaterialButton
+            variant="contained"
+            color="default"
+            onClick={() => {
+              actions.delete(selected.id);
+            }}
+          >
+            Delete
+          </MaterialButton>
+        ) : null}
       </Grid>
     </Box>
-  );
+  ) : null;
 };

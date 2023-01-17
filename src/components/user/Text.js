@@ -48,11 +48,11 @@ export const Text = ({ text, fontSize, textAlign }) => {
         onChange={(e) => setProp((props) => (props.text = e.target.value.replace(/<\/?[^>]+(>|$)/g, "")))}
         style={{ fontSize: `${fontSize}px`, textAlign }}
       />
-      {hasSelectedNode && (
+      {/* {hasSelectedNode && (
         <FormControl className="text-additional-settings" size="small">
           <FormLabel component="legend">Font size</FormLabel>
           <Slider
-            defaultValue={fontSize}
+            value={fontSize}
             step={1}
             min={7}
             max={50}
@@ -62,8 +62,34 @@ export const Text = ({ text, fontSize, textAlign }) => {
             }}
           />
         </FormControl>
-      )}
+      )} */}
     </div>
+  );
+};
+
+const TextSettings = () => {
+  const {
+    actions: { setProp },
+    fontSize,
+  } = useNode((node) => ({
+    fontSize: node.data.props.fontSize,
+  }));
+
+  return (
+    <>
+      <FormControl size="small" component="fieldset">
+        <FormLabel component="legend">Font size</FormLabel>
+        <Slider
+          value={fontSize || 7}
+          step={7}
+          min={1}
+          max={50}
+          onChange={(_, value) => {
+            setProp((props) => (props.fontSize = value));
+          }}
+        />
+      </FormControl>
+    </>
   );
 };
 
@@ -71,7 +97,15 @@ export const Text = ({ text, fontSize, textAlign }) => {
  * 可以自定义拖拽规则
  */
 Text.craft = {
+  // 设置默认值
+  props: {
+    text: "Hi",
+    fontSize: 20,
+  },
   rules: {
     canDrag: (node) => node.data.props.text != "Drag",
+  },
+  related: {
+    settings: TextSettings,
   },
 };
